@@ -17,14 +17,14 @@ async def retrieve_user(email: str):
 @app.post("/signup")
 async def create_user(email: str, lastname: str, age: int, city: str, firstname: str):
 
-    await set_user(session, lastname, age, city, email, firstname)
+    set_user(session, lastname, age, city, email, firstname)
     return JSONResponse("user creaed", status_code=status.HTTP_200_OK)
 
 
 @app.post("/update_age")
 async def update_user_age(email: str, new_age: int):
 
-    await update_user(session, new_age, email)
+    update_user(session, new_age, email)
     return JSONResponse("updated", status_code=status.HTTP_200_OK)
 
 

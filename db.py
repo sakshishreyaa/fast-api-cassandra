@@ -24,7 +24,11 @@ def create_table(session):
     )
 
 
-async def set_user(session, lastname, age, city, email, firstname):
+def dosomething(row):
+    print(row, "inside func user created successfully")
+
+
+def set_user(session, lastname, age, city, email, firstname):
     result = session.execute_async(
         "INSERT INTO users (lastname, age, city, email, firstname) VALUES (%s,%s,%s,%s,%s)",
         [lastname, age, city, email, firstname],
@@ -32,6 +36,7 @@ async def set_user(session, lastname, age, city, email, firstname):
 
     def handle_success(row):
         print("user created")
+        dosomething(row)
         return row
 
     def handle_error(exception):
@@ -43,16 +48,21 @@ async def set_user(session, lastname, age, city, email, firstname):
 def get_user(session, email):
     result = session.execute_async("SELECT * FROM users WHERE email = %s", [email])
 
-    return result.result().one()
+    return (
+        result.result().one()
+        if result.result().one() is not None
+        else "User does not exist"
+    )
 
 
-async def update_user(session, new_age, email):
+def update_user(session, new_age, email):
     result = session.execute_async(
         "UPDATE users SET age =%s WHERE email = %s", [new_age, email]
     )
     # time.sleep(5)
 
     print("start")
+    print(result)
 
     def handle_success(row):
         print("row update successsssss!!!!!!!!!!")
@@ -87,11 +97,11 @@ async def main():
 
     # create_table(session)
 
-    await set_user(session, lastname, age, city, email, firstname)
+    set_user(session, lastname, age, city, email, firstname)
 
     get_user(session, email)
 
-    await update_user(session, new_age, email)
+    update_user(session, new_age, email)
 
     get_user(session, email)
 
